@@ -1,3 +1,5 @@
+https://frank-ellingsen.github.io/project-finance-ai/?utm_source=copilot.com
+
 # 📊 Project Finance AI Controller
 
 A multi-agent, local-first operational data orchestration pipeline and interactive dashboard for project finance management. This system processes raw transactional ERP data, calculates project forecasts (EAC/ETC), analyzes variances, and identifies risk elements using specialized agent modules.
