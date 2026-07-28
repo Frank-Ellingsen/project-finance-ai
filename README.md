@@ -7,6 +7,7 @@ A simple Streamlit app template for you to modify!
 ### How to run it on your own machine
 
 Prerequisite: install `uv` if you don't already have it.
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 ```
 $ curl -LsSf https://astral.sh/uv/install.sh | sh
