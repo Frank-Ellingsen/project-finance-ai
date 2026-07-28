@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Finance AI Controller</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --primary: #1f6feb;
+            --success: #2ea043;
+            --warning: #d29922;
+            --danger: #f85149;
+            --accent: #58a6ff;
+            --border-color: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 260px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(31, 111, 235, 0.15);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Main Content area */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        .header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* Tab panels */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+        }
+
+        .kpi-card.success::before { background-color: var(--success); }
+        .kpi-card.warning::before { background-color: var(--warning); }
+        .kpi-card.danger::before { background-color: var(--danger); }
+
+        .kpi-lbl {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .kpi-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Dashboard panels */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background-color: rgba(48, 54, 61, 0.5);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.danger { background-color: rgba(248, 81, 73, 0.15); color: var(--danger); }
+        .badge.warning { background-color: rgba(210, 153, 34, 0.15); color: var(--warning); }
+        .badge.success { background-color: rgba(46, 160, 67, 0.15); color: var(--success); }
+        .badge.primary { background-color: rgba(31, 111, 235, 0.15); color: var(--accent); }
+
+        /* Gantt chart CSS style */
+        .gantt-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .gantt-label {
+            width: 180px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .gantt-track {
+            flex: 1;
+            background-color: #21262d;
+            height: 24px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gantt-bar {
+            height: 100%;
+            border-radius: 12px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .gantt-bar.completed { background-color: var(--success); }
+        .gantt-bar.delayed { background-color: var(--danger); }
+        .gantt-bar.underway { background-color: var(--primary); }
+
+        /* Info box */
+        .info-box {
+            background-color: rgba(56, 139, 253, 0.1);
+            border: 1px solid rgba(56, 139, 253, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #58a6ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo-area">
+            <span class="logo-icon">📊</span>
+            <span class="logo-text">Finance AI</span>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item active" onclick="switchTab('overview')">📊 Executive Overview</li>
+            <li class="nav-item" onclick="switchTab('evm')">📈 EVM Trends & Waterfall</li>
+            <li class="nav-item" onclick="switchTab('risks')">⚠️ Risk & Action Registry</li>
+            <li class="nav-item" onclick="switchTab('bidding')">💼 Bidding & Post-Calc</li>
+            <li class="nav-item" onclick="switchTab('gantt')">📅 Project Gantt Schedule</li>
+        </ul>
+    </div>
+
+    <!-- Main Content Panel -->
+    <div class="main-content">
+        <!-- TAB 1: EXECUTIVE OVERVIEW -->
+        <div id="overview" class="tab-panel active">
+            <h1 class="header-title">Executive Overview</h1>
+            <p class="subtitle">How is the portfolio performing at a glance?</p>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-lbl">Project ID</div>
+                    <div class="kpi-val">P-1023</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-lbl">Total Budget Cost</div>
+                    <div class="kpi-val">$1,170,000</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-lbl">Total Actual Cost</div>
+                    <div class="kpi-val">$1,259,000</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-lbl">Estimate at Completion</div>
+                    <div class="kpi-val">$1,420,000</div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-lbl">Risk Level</div>
+                    <div class="kpi-val" style="color: var(--danger);">High</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                👉 <strong>Headline Insight:</strong> The project is tracking at high risk with a cost variance of <strong>$89,000 (7.6%)</strong> overbudget. EAC stands at <strong>$1,420,000</strong> against a budget of <strong>$1,170,000</strong>.
+            </div>
+
+            <div class="dashboard-row">
+                <div class="panel">
+                    <div class="panel-title">Budget vs Actual by Cost Category</div>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="costComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: EVM TRENDS -->
+        <div id="evm" class="tab-panel">
+            <h1 class="header-title">EVM Trends & Waterfall Bridge</h1>
+            <p class="subtitle">What is the earned value trend over time?</p>
+
+            <div class="dashboard-row">
+                <div class="panel">
+                    <div class="panel-title">EVM S-Curve (PV vs EV vs AC)</div>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="sCurveChart"></canvas>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-title">Performance Indices (CPI & SPI)</div>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="indicesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">Variance Bridge (BAC to EAC)</div>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="waterfallChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: RISK & ACTIONS -->
+        <div id="risks" class="tab-panel">
+            <h1 class="header-title">Risk Registry & Challenge Questions</h1>
+            <p class="subtitle">What are the specific issues and what should we do?</p>
+
+            <div class="dashboard-row">
+                <div class="panel">
+                    <div class="panel-title">🚨 Identified Risk Items</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Probability</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Subcontractor delay</td>
+                                <td>0.35</td>
+                                <td>$60,000</td>
+                            </tr>
+                            <tr>
+                                <td>Material shortage</td>
+                                <td>0.25</td>
+                                <td>$45,000</td>
+                            </tr>
+                            <tr>
+                                <td>Weather disruption</td>
+                                <td>0.15</td>
+                                <td>$30,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">💡 Variance Drivers</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Driver Name</th>
+                                <th>Type</th>
+                                <th>Impact on Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Material price increase</td>
+                                <td>Price</td>
+                                <td style="color: var(--danger); font-weight: 600;">-$42,000</td>
+                            </tr>
+                            <tr>
+                                <td>Labor overrun</td>
+                                <td>Volume</td>
+                                <td style="color: var(--danger); font-weight: 600;">-$38,000</td>
+                            </tr>
+                            <tr>
+                                <td>Equipment downtime</td>
+                                <td>Timing</td>
+                                <td style="color: var(--danger); font-weight: 600;">-$24,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">💬 Challenge Questions for Project Review Meetings</div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                    <li style="border-left: 3px solid var(--accent); padding-left: 12px;">Why are materials costs experiencing a 4.9% spike ($472k vs $450k) in this reporting period?</li>
+                    <li style="border-left: 3px solid var(--accent); padding-left: 12px;">What schedule recovery steps are planned to improve the declining SPI (0.92)?</li>
+                    <li style="border-left: 3px solid var(--accent); padding-left: 12px;">Why was the equipment downtime not covered in the original contingency budget calculations?</li>
+                    <li style="border-left: 3px solid var(--accent); padding-left: 12px;">Are subcontractors tracking to their revised milestones to avoid further late penalties?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB 4: BIDDING & POST-CALC -->
+        <div id="bidding" class="tab-panel">
+            <h1 class="header-title">Bidding & Post-Calculation</h1>
+            <p class="subtitle">What do leaders need to know and decide?</p>
+
+            <div class="dashboard-row">
+                <div class="panel">
+                    <div class="panel-title">📊 Post-Calculation: Bid vs Actual Value</div>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="biddingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">📑 Lessons Learned</div>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                        <li style="background-color: rgba(210, 153, 34, 0.1); border: 1px solid rgba(210, 153, 34, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">⚠️ Material price volatility was significantly underestimated during calculations.</li>
+                        <li style="background-color: rgba(210, 153, 34, 0.1); border: 1px solid rgba(210, 153, 34, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">⚠️ Labor productivity assumptions were overly optimistic.</li>
+                        <li style="background-color: rgba(210, 153, 34, 0.1); border: 1px solid rgba(210, 153, 34, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">⚠️ Equipment downtime risks were not incorporated into the risk scoring models.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">🔄 Suggested Bidding Model Parameter Updates</div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+                    <li style="background-color: rgba(46, 160, 67, 0.1); border: 1px solid rgba(46, 160, 67, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">🔧 Increase material contingency buffer from 5% to 8%.</li>
+                    <li style="background-color: rgba(46, 160, 67, 0.1); border: 1px solid rgba(46, 160, 67, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">🔧 Add a productivity buffer of 10% for labor hours.</li>
+                    <li style="background-color: rgba(46, 160, 67, 0.1); border: 1px solid rgba(46, 160, 67, 0.3); border-radius: 6px; padding: 12px; font-size: 14px;">🔧 Include a flat 0.03 modifier to adjust for potential equipment downtime.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB 5: GANTT CHART -->
+        <div id="gantt" class="tab-panel">
+            <h1 class="header-title">Project Gantt Schedule</h1>
+            <p class="subtitle">Milestone Schedule & Execution Timeline</p>
+
+            <div class="panel">
+                <div class="panel-title">📅 Timeline Calendar</div>
+                <div class="gantt-chart">
+                    <div class="gantt-row">
+                        <span class="gantt-label">1. Engineering & Design</span>
+                        <div class="gantt-track">
+                            <div class="gantt-bar completed" style="left: 0%; width: 25%;">Completed (100%)</div>
+                        </div>
+                    </div>
+                    <div class="gantt-row">
+                        <span class="gantt-label">2. Procurement Phase</span>
+                        <div class="gantt-track">
+                            <div class="gantt-bar completed" style="left: 15%; width: 30%;">Completed (100%)</div>
+                        </div>
+                    </div>
+                    <div class="gantt-row">
+                        <span class="gantt-label">3. Subcontractor Setup</span>
+                        <div class="gantt-track">
+                            <div class="gantt-bar delayed" style="left: 35%; width: 20%;">Delayed (85%)</div>
+                        </div>
+                    </div>
+                    <div class="gantt-row">
+                        <span class="gantt-label">4. Core Fabrication</span>
+                        <div class="gantt-track">
+                            <div class="gantt-bar underway" style="left: 40%; width: 40%;">Underway (65%)</div>
+                        </div>
+                    </div>
+                    <div class="gantt-row">
+                        <span class="gantt-label">5. Testing & Verification</span>
+                        <div class="gantt-track">
+                            <div style="position: absolute; left: 80%; width: 20%; color: var(--text-muted); font-size: 11px; padding-top: 2px;">Not Started (0%)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripting tab switches and Charts -->
+    <script>
+        // Switch between tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            
+            // Find active tab and trigger active class
+            const navItems = document.querySelectorAll('.nav-item');
+            if (tabId === 'overview') navItems[0].classList.add('active');
+            else if (tabId === 'evm') navItems[1].classList.add('active');
+            else if (tabId === 'risks') navItems[2].classList.add('active');
+            else if (tabId === 'bidding') navItems[3].classList.add('active');
+            else if (tabId === 'gantt') navItems[4].classList.add('active');
+        }
+
+        // --- CHART GENERATION ---
+        
+        // 1. Cost Comparison Chart (Overview Tab)
+        const ctxCost = document.getElementById('costComparisonChart').getContext('2d');
+        new Chart(ctxCost, {
+            type: 'bar',
+            data: {
+                labels: ['Materials', 'Labor', 'Subcontractors', 'Equipment'],
+                datasets: [
+                    {
+                        label: 'Budget Cost',
+                        data: [450000, 380000, 250000, 90000],
+                        backgroundColor: '#546E7A',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Actual Cost',
+                        data: [472000, 410000, 265000, 102000],
+                        backgroundColor: '#00838F',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#c9d1d9' } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8b949e' } },
+                    y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
+                }
+            }
+        });
+
+        // 2. EVM S-Curve Chart (EVM Tab)
+        const ctxSCurve = document.getElementById('sCurveChart').getContext('2d');
+        new Chart(ctxSCurve, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Planned Value (PV)',
+                        data: [200000, 450000, 700000, 950000, 1100000, 1170000],
+                        borderColor: '#6A1B9A',
+                        tension: 0.1,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Earned Value (EV)',
+                        data: [180000, 400000, 650000, 880000, 1020000, 1080000],
+                        borderColor: '#1565C0',
+                        tension: 0.1,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Actual Cost (AC)',
+                        data: [190000, 420000, 710000, 990000, 1150000, 1259000],
+                        borderColor: '#00838F',
+                        tension: 0.1,
+                        borderWidth: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#c9d1d9' } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8b949e' } },
+                    y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
+                }
+            }
+        });
+
+        // 3. Performance Indices (EVM Tab)
+        const ctxIndices = document.getElementById('indicesChart').getContext('2d');
+        new Chart(ctxIndices, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'CPI',
+                        data: [0.95, 0.95, 0.92, 0.89, 0.89, 0.86],
+                        borderColor: '#2E7D32',
+                        tension: 0.1,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'SPI',
+                        data: [0.90, 0.89, 0.93, 0.93, 0.93, 0.92],
+                        borderColor: '#F9A825',
+                        tension: 0.1,
+                        borderWidth: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#c9d1d9' } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8b949e' } },
+                    y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' }, min: 0.7, max: 1.2 }
+                }
+            }
+        });
+
+        // 4. Waterfall Variance Bridge (EVM Tab)
+        const ctxWaterfall = document.getElementById('waterfallChart').getContext('2d');
+        new Chart(ctxWaterfall, {
+            type: 'bar',
+            data: {
+                labels: ['BAC', 'Material Overrun', 'Labor Overrun', 'Equipment Overrun', 'Subcontractor Overrun', 'EAC'],
+                datasets: [{
+                    label: 'Variance Amount ($)',
+                    data: [1170000, 52000, 60000, 22000, 25000, 1420000],
+                    backgroundColor: [
+                        '#6A1B9A', // BAC
+                        '#C62828', // Mat
+                        '#C62828', // Lab
+                        '#C62828', // Eqp
+                        '#C62828', // Sub
+                        '#6A1B9A'  // EAC
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8b949e' } },
+                    y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
+                }
+            }
+        });
+
+        // 5. Bidding Bid vs Actual (Bidding Tab)
+        const ctxBid = document.getElementById('biddingChart').getContext('2d');
+        new Chart(ctxBid, {
+            type: 'bar',
+            data: {
+                labels: ['Materials', 'Labor', 'Equipment', 'Subcontractors'],
+                datasets: [
+                    {
+                        label: 'Bid Value',
+                        data: [420000, 350000, 80000, 240000],
+                        backgroundColor: '#546E7A',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Actual Value',
+                        data: [472000, 410000, 102000, 265000],
+                        backgroundColor: '#00838F',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#c9d1d9' } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#8b949e' } },
+                    y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
