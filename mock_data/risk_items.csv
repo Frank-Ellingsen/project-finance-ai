@@ -1,0 +1,4 @@
+project_id,period,description,probability,impact
+P-1023,2026-06,Subcontractor delay,0.35,60000
+P-1023,2026-06,Material shortage,0.25,45000
+P-1023,2026-06,Weather disruption,0.15,30000

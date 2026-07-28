@@ -1,30 +1,3 @@
-# 🎈 Blank app template
-
-A simple Streamlit app template for you to modify!
-
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
-
-### How to run it on your own machine
-
-Prerequisite: install `uv` if you don't already have it.
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-```
-$ curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-1. Sync the dependencies
-
-   ```
-   $ uv sync
-   ```
-
-2. Run the app
-
-   ```
-   $ uv run streamlit run streamlit_app.py
-   ```
-
 # 📊 Project Finance AI Controller
 
 A multi-agent, local-first operational data orchestration pipeline and interactive dashboard for project finance management. This system processes raw transactional ERP data, calculates project forecasts (EAC/ETC), analyzes variances, and identifies risk elements using specialized agent modules.
@@ -82,8 +55,12 @@ For full details on the workflow, see the [Agent Workflow Documentation](docs/ar
 ├── mock_data/                    # CSV raw copies of the mock datasets
 ├── tests/                        # Unit test suite for validation
 ├── app.py                        # Interactive Streamlit dashboard UI
+├── index.html                    # Static dashboard for hosting via GitHub Pages
 └── simulate_pipeline.py          # CLI multi-agent simulation orchestrator
 ```
+
+> [!NOTE]
+> The repository is set up with GitHub Pages at **https://frank-ellingsen.github.io/project-finance-ai/**, serving the interactive static `index.html` dashboard directly.
 
 ---
 

@@ -1,0 +1,6 @@
+item,bid_value,actual_value,variance
+Materials,420000,472000,52000
+Labor,350000,410000,60000
+Equipment,80000,102000,22000
+Subcontractors,240000,265000,25000
+Total Cost,1090000,1259000,169000

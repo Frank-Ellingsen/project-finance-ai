@@ -1,0 +1,6 @@
+project_id,period,cost_code,description,budget_cost,actual_cost,budget_revenue,actual_revenue,hours_booked,qty_installed
+P-1023,2026-06,100-MAT,Materials,450000,472000,0,0,0,120
+P-1023,2026-06,200-LAB,Labor,380000,410000,0,0,320,0
+P-1023,2026-06,300-SUB,Subcontractors,250000,265000,0,0,0,0
+P-1023,2026-06,400-EQP,Equipment,90000,102000,0,0,0,0
+P-1023,2026-06,500-REV,Revenue,0,0,1300000,1285000,0,0

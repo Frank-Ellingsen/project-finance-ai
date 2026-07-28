@@ -1,0 +1,4 @@
+project_id,period,option_name,financial_impact,risk_impact,recommendation
+P-1023,2026-06,Accelerate subcontractor work,-45000,Medium,Recommended: mitigates delay risk
+P-1023,2026-06,Reduce scope,0,Low,Not recommended: customer dissatisfaction
+P-1023,2026-06,Add overtime labor,-30000,High,Recommended only if schedule-critical

@@ -1,0 +1,4 @@
+project_id,period,driver_name,driver_type,impact_on_margin
+P-1023,2026-06,Material price increase,price,-42000
+P-1023,2026-06,Labor overrun,volume,-38000
+P-1023,2026-06,Equipment downtime,timing,-24000

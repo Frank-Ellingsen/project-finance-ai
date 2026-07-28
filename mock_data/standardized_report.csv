@@ -1,0 +1,9 @@
+section,field
+Executive Summary,margin_variance_abs
+Executive Summary,risk_level
+Financial Overview,total_actual_cost
+Financial Overview,total_actual_revenue
+Forecast Overview,eac_cost
+Forecast Overview,eac_margin
+Risk Overview,driver_name
+Risk Overview,impact_on_margin

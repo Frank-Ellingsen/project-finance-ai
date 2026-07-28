@@ -1,0 +1,6 @@
+kpi_name,dax_expression
+Total Cost,SUM(FactCosts[ActualCost])
+Total Revenue,SUM(FactRevenue[ActualRevenue])
+Margin,[Total Revenue] - [Total Cost]
+CPI,"DIVIDE([BudgetCost],[ActualCost])"
+SPI,"DIVIDE([BudgetHours],[ActualHours])"

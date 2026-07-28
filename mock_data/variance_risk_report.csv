@@ -1,0 +1,2 @@
+project_id,period,cost_variance_abs,cost_variance_pct,revenue_variance_abs,revenue_variance_pct,margin_variance_abs,margin_variance_pct,risk_level
+P-1023,2026-06,89000,7.6,-15000,-1.2,-104000,-9.1,High

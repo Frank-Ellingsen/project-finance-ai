@@ -1,0 +1,18 @@
+{
+  "folders": [
+    { "path": "agents" },
+    { "path": "orchestration" },
+    { "path": "tools" },
+    { "path": "data" },
+    { "path": "scripts" },
+    { "path": "docs" },
+    { "path": "env" },
+    { "path": "tests" }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "env/conda/python.exe",
+    "files.exclude": {
+      "**/__pycache__": true
+    }
+  }
+}
